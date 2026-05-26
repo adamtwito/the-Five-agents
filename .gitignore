@@ -5,3 +5,7 @@
 .env
 .env.local
 .env.*.local
+
+# Output artifacts - generated content, do not track
+Output/*
+!Output/.gitkeep
