@@ -9,3 +9,7 @@
 # Output artifacts - generated content, do not track
 Output/*
 !Output/.gitkeep
+
+# Yuval's generated images - do not track
+yuval/outputs/*
+!yuval/outputs/.gitkeep
