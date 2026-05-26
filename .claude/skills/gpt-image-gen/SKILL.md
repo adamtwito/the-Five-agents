@@ -43,9 +43,20 @@ description: Generate a PNG image via OpenAI Images API (model gpt-image-2). Tak
 
 ---
 
-## איך משתמשים — שתי דרכי קריאה ב-Bash
+## איך משתמשים — שלוש דרכי קריאה
 
-### דרך א': curl + jq + base64 (מקצר)
+### דרך מומלצת ב-Windows/Git Bash: Node.js helper (`yuval/_gen.js`)
+
+Git Bash על Windows לרוב **לא כולל** `jq`, ו-`python` ברירת המחדל הוא ה-Microsoft Store stub (לא Python אמיתי). Node.js לעומת זאת מותקן ברוב המקרים ועובד מצוין:
+
+```bash
+set -a; source .env; set +a
+node yuval/_gen.js "<PROMPT IN ENGLISH>" "<OUTPUT_PATH>.png"
+```
+
+הסקריפט (`yuval/_gen.js`) מטפל הכל: בונה JSON תקין, שולח את הקריאה, מפענח את ה-base64, ושומר את ה-PNG. גם נופל אחורה ל-`url` אם ה-API חוזר עם URL במקום b64. אם נכשל - מדפיס שגיאה ל-stderr עם קוד שגיאה.
+
+### דרך ב': curl + jq + base64 (מקצר, Linux/macOS)
 
 עובד כשהסביבה כוללת `jq` ו-`base64`:
 
@@ -62,9 +73,9 @@ curl -sS -X POST "https://api.openai.com/v1/images/generations" \
   | jq -r '.data[0].b64_json' | base64 --decode > "$OUT"
 ```
 
-### דרך ב': Python fallback (מומלץ ב-Git Bash על Windows)
+### דרך ג': Python fallback (Linux/macOS עם Python אמיתי)
 
-`jq` ו-`base64` לא תמיד מותקנים ב-Git Bash. במקרה כזה השתמש ב-Python:
+אם הסביבה כוללת Python 3 אמיתי (לא Microsoft Store stub):
 
 ```bash
 set -a; source .env; set +a
@@ -144,16 +155,20 @@ cat /tmp/img-response.json
 ## דרישות סביבה
 
 - `OPENAI_API_KEY` מוגדר ב-`.env` (בשורש הפרויקט) או ב-environment.
-- `curl` (כמעט תמיד זמין).
-- אחד מאלה: (`jq` + `base64`) **או** `python3`.
+- **Windows/Git Bash:** `node` (כמעט תמיד מותקן). הסקריפט `yuval/_gen.js` הוא הדרך הקלה ביותר.
+- **Linux/macOS:** `curl` + (`jq` + `base64`) **או** `python3` אמיתי.
+
+⚠️ ב-Windows, `python` ברירת המחדל לעיתים מצביע ל-Microsoft Store stub - **לא Python אמיתי**. במקרה כזה השתמש ב-`yuval/_gen.js` במקום.
 
 ---
 
 ## סיכום למודל שמשתמש בסקיל
 
-1. ודא `OPENAI_API_KEY` קיים.
+1. ודא `OPENAI_API_KEY` קיים (`source .env`).
 2. בנה prompt באנגלית, תיאורי וקונקרטי.
 3. בחר `<OUTPUT_PATH>` (מומלץ: `yuval/outputs/<YYYY-MM-DD>-<slug>.png`).
-4. הרץ אחת משתי הדרכים למעלה.
-5. ודא `ls -l` שהקובץ נוצר וגדול מ-1KB.
+4. הרץ:
+   - **ב-Windows:** `node yuval/_gen.js "<PROMPT>" "<OUTPUT_PATH>"` (הכי בטוח).
+   - **ב-Linux/macOS:** אחת מהדרכים האחרות.
+5. ודא `ls -l` שהקובץ נוצר וגדול מ-50KB.
 6. אם נכשל - **בדוק תגובת API, לא את שם המודל.**

@@ -60,7 +60,14 @@ color: cyan
 
 **שם המודל הוא `gpt-image-2`. אל תחליף אותו לעולם.**
 
-הסקיל מציג שתי דרכים: curl+jq וגם Python fallback. ב-Windows/Git Bash העדף את Python fallback (כי jq לא תמיד מותקן).
+**ב-Windows/Git Bash** (סביבת ברירת המחדל של הפרויקט) - הדרך המומלצת היא להשתמש בסקריפט Node שכבר קיים:
+
+```bash
+set -a; source .env; set +a
+node yuval/_gen.js "<PROMPT באנגלית>" "yuval/outputs/<YYYY-MM-DD>-<slug>.png"
+```
+
+הסקריפט מטפל בכל: שליחה ל-API, פענוח base64, ושמירת PNG. הוא **לא** קיים על מקרה (Python ה-Microsoft Store stub לא עובד; jq לא מותקן). שאר השיטות מתועדות ב-SKILL.md.
 
 ### שלב 5: שמירה
 

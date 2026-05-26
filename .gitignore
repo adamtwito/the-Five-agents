@@ -10,6 +10,6 @@
 Output/*
 !Output/.gitkeep
 
-# Yuval's generated images - do not track
-yuval/outputs/*
-!yuval/outputs/.gitkeep
+# Yuval's generated images - PNGs are large binaries, regenerable from sidecar .txt prompts.
+# Track .txt prompts (small, useful for iteration); ignore PNGs.
+yuval/outputs/*.png
